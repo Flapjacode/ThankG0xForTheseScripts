@@ -1,0 +1,31 @@
+@echo off
+echo This script will force format a USB drive on Windows.
+
+rem Ask the user to confirm which drive to format
+echo WARNING: Make sure you select the correct drive to avoid data loss.
+echo.
+echo List of available disks:
+diskpart /s list_disks.txt
+
+rem Prompt user to enter the disk number of the USB drive
+set /p diskNum=Enter the disk number of the USB drive you want to format (e.g., 1): 
+
+rem Create a diskpart script to clean, create partition, and format the USB
+echo select disk %diskNum% > format_usb.txt
+echo clean >> format_usb.txt
+echo create partition primary >> format_usb.txt
+echo select partition 1 >> format_usb.txt
+echo active >> format_usb.txt
+echo format fs=ntfs quick >> format_usb.txt
+echo assign >> format_usb.txt
+echo exit >> format_usb.txt
+
+rem Run the diskpart script
+diskpart /s format_usb.txt
+
+rem Clean up the temporary files
+del format_usb.txt
+
+echo The USB drive has been formatted successfully.
+pause
+exit
